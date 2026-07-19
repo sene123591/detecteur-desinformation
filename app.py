@@ -42,12 +42,15 @@ def charger_modele_simple():
     return vectoriseur, modele
 
 
+# Remplacez cet identifiant par le vôtre : "votre_nom_utilisateur/nom_du_repo"
+REPO_MODELE_AVANCE = "sene90/distilbert-welfake-desinformation"
+
 @st.cache_resource
 def charger_modele_avance():
-    """Charge le modèle avancé : DistilBERT fine-tuné."""
+    """Charge le modèle avancé : DistilBERT fine-tuné, hébergé sur le Hugging Face Hub."""
     from transformers import AutoTokenizer, AutoModelForSequenceClassification
-    tokenizer = AutoTokenizer.from_pretrained("modele_avance_final")
-    modele = AutoModelForSequenceClassification.from_pretrained("modele_avance_final")
+    tokenizer = AutoTokenizer.from_pretrained(REPO_MODELE_AVANCE)
+    modele = AutoModelForSequenceClassification.from_pretrained(REPO_MODELE_AVANCE)
     modele.eval()
     return tokenizer, modele
 
