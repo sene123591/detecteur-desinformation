@@ -104,6 +104,11 @@ def predire_avec_modele_avance(texte, tokenizer, modele):
     if len(mots) > 60:
         mots = mots[:60]  # on limite pour rester rapide
 
+    # Si la classe prédite est "Fake" (0), on inverse le signe pour que
+    # l'importance reste toujours exprimée par rapport à "Real" (comme pour
+    # le modèle simple) : positif = pousse vers Real, négatif = pousse vers Fake.
+    signe = 1 if prediction == 1 else -1
+
     importances = []
     for i in range(len(mots)):
         texte_sans_mot = " ".join(mots[:i] + mots[i + 1:])
@@ -113,7 +118,7 @@ def predire_avec_modele_avance(texte, tokenizer, modele):
         with torch.no_grad():
             sortie_sans_mot = modele(**entrees_sans_mot)
             proba_sans_mot = torch.nn.functional.softmax(sortie_sans_mot.logits, dim=-1)[0]
-        variation = float(probabilites[prediction] - proba_sans_mot[prediction])
+        variation = signe * float(probabilites[prediction] - proba_sans_mot[prediction])
         importances.append((mots[i], variation))
 
     importances.sort(key=lambda x: abs(x[1]), reverse=True)
